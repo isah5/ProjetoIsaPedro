@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Biblioteca Virtual</title>
+    <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+</head>
+
+<body>
+    <h1>Gerenciamento de Biblioteca Virtual</h1>
+    <p style="font-weight:bold" id="paragrafoMensagem"></p>
+    
+    <table id="tabelaLivros">  
+        <tr><td><input type="button" value="Novo Livro" onclick="novoLivro()" id="btnNovoLivro"></td> <td></td> <td></td><td></td></tr>
+        <tr> <th>ID</th> <th>Título</th> <th>Autor</th> <th>Ano</th> <th>Ação</th> </tr>
+        <tbody id="corpoTabelaLivros"> </tbody>
+    </table>
+    <script src="rest.js"></script>
+    <script>
+        const tabelaLivros = document.querySelector('#tabelaLivros');
+        const corpoTabela = document.querySelector('#corpoTabelaLivros');
+        const paragrafoMensagem = document.querySelector('#paragrafoMensagem');
+        inicializar();
+
+        function inicializar() {
+            paragrafoMensagem.textContent = 'Listagem de todos os livros'
+            tabelaLivros.style.display = 'inline';
+            listarTodosLivros();            
+	    }
+        
+        function listarTodosLivros() {
+            const errorHandler = function(error) { 
+                paragrafoMensagem.textContent = "Erro ao listar livros (código " + error.message + ")";
+            }
+	        asyncLerLivros(preencherTabela, errorHandler);
+	    }
+
+        function preencherTabela(livros) {
+            corpoTabela.innerHTML = "";
+            var n = livros.length;
+            for (var i = 0; i < n; i++) {
+                let livro = livros[i];
+                let linha = corpoTabela.insertRow();
+                let celulaId = linha.insertCell();
+                let celulaTitulo = linha.insertCell();
+                let celulaAutor = linha.insertCell();
+                let celulaAno = linha.insertCell();
+                let celulaAcao = linha.insertCell();
+
+                celulaId.textContent = livro.id;
+                celulaTitulo.textContent = livro.titulo;
+                celulaAutor.textContent = livro.autor;
+                celulaAno.textContent = livro.ano;
+
+                let botaoReservar = document.createElement('input');
+                botaoReservar.type = 'button';
+                botaoReservar.value = 'Reservar';
+                botaoReservar.onclick = function() { reservarLivro(livro.id); };
+                celulaAcao.appendChild(botaoReservar);
+            }
+        }
+
+        function reservarLivro(id) {
+            const errorHandler = function(error) { 
+                paragrafoMensagem.textContent = "Erro ao reservar o livro (código " + error.message + ")";
+            }
+            asyncReservarLivro(id, function() {
+                paragrafoMensagem.textContent = "Livro reservado com sucesso!";
+                listarTodosLivros(); // Atualiza a lista após a reserva
+            }, errorHandler);
+        }
+
+    </script>
+</body>
+</html>
