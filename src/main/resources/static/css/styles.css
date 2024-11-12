@@ -1,0 +1,170 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f9;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+h1 {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+h2 {
+    color: #34495e;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    border-bottom: 2px solid #2980b9;
+    padding-bottom: 5px;
+    width: 100%;
+}
+
+#paragrafoMensagem {
+    text-align: center;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 1em;
+}
+
+.container {
+    width: 90%;
+    max-width: 800px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+#loginArea, #publicArea, #adminArea {
+    width: 100%;
+    margin: 1em 0;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+#loginForm label {
+    font-weight: bold;
+    color: #333;
+    width: 100%;
+    max-width: 300px;
+}
+
+#loginForm input {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#loginForm button {
+    padding: 10px 20px;
+    background-color: #2980b9;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+#loginForm button:hover {
+    background-color: #21618c;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+table th, table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #2980b9;
+    color: #fff;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+table tr:nth-child(even) {
+    background-color: #f4f6f9;
+}
+
+table tr:hover {
+    background-color: #eaf3ff;
+}
+
+button {
+    padding: 8px 12px;
+    background-color: #2980b9;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-right: 5px;
+}
+
+button:hover {
+    background-color: #21618c;
+}
+
+#btnNovo {
+    background-color: #27ae60;
+    padding: 10px 20px;
+    margin-top: 10px;
+}
+
+#btnNovo:hover {
+    background-color: #1e8449;
+}
+
+/* Área pública e administração separadas */
+#publicArea h2, #adminArea h2 {
+    color: #2980b9;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+#adminArea {
+    background-color: #eef6fc;
+}
+
+#publicArea {
+    background-color: #fcfcfc;
+}
