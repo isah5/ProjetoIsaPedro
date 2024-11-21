@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Livros</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+    </head>
+    
+    <body>
+        <h1>Biblioteca Virtual</h1>
+        
+        <table>
+            <tr> <td>ID:</td> <td><input type="text" id="txtId"></td> </tr>
+            <tr> <td>Título:</td> <td><input type="text" id="txtTitulo"></td> </tr>
+            <tr> <td>Autor:</td> <td><input type="text" id="txtAutor"></td> </tr>
+            <tr> <td>Ano de Publicação:</td> <td><input type="text" id="txtAnoPublicacao"></td> </tr>
+            <tr><td></td><td>
+                <input type="button" value="Novo" onclick="novoLivro()" id="btnNovo">
+                <input type="button" value="Salvar" onclick="salvarLivro()" id="btnSalvar">
+                <input type="button" value="Apagar" onclick="apagarLivro()" id="btnApagar">
+                <input type="button" value="Cancelar" onclick="cancelarEdicao()" id="btnCancelar">
+                <input type="button" value="Logout" onclick="logout()" id="btnLogout">
+            </td></tr>             
+        </table>
+
+        <p style="font-weight:bold" id="paragrafoMensagem"></p>
+
+        <table>    
+            <tr> <th>ID</th> <th>Título</th> <th>Autor</th> <th>Ano de Publicação</th> </tr>   
+                                           
+            <tbody id="corpoTabelaLivros"> </tbody>
+        </table>
+        
+        
+        <script>
+        
+var token = localStorage.getItem('token');
+if (!token) {
+	window.location.replace("/html/login.html");
+}
+const corpoTabela = document.querySelector('#corpoTabelaLivros');
+const paragrafoMensagem = document.querySelector('#paragrafoMensagem');
+const txtTitulo = document.querySelector('#txtTitulo');
+const txtAutor = document.querySelector('#txtAutor');
+const txtAnoPublicacao = document.querySelector('#txtAnoPublicacao');
+const txtId = document.querySelector('#txtId');
+const btnNovo = document.querySelector('#btnNovo');
+const btnSalvar = document.querySelector('#btnSalvar');
+const btnApagar = document.querySelector('#btnApagar');
+const btnCancelar = document.querySelector('#btnCancelar');
+var criandoNovoLivro = false;
+inicializar();
+
+function inicializar() {
+    paragrafoMensagem.innerHTML =  'Pressione o botão Novo ou selecione um livro da lista:';
+    txtId.value = '';
+    txtTitulo.value = '';
+    txtAnoPublicacao.value = '';
+    txtAutor.value = '';
+    txtId.disabled = true;
+    txtTitulo.disabled = true;
+    txtAutor.disabled = true;
+    txtAnoPublicacao.disabled = true;
+    btnNovo.disabled = false;
+    btnSalvar.disabled = true;
+    btnApagar.disabled = true;
+    btnCancelar.disabled = true;
+    criandoNovoLivro = false;
+    listarTodosLivros();
+}
+
+async function listarTodosLivros() {
+	fetch('/api/livros' ,{
+        method: 'GET',
+        headers: {'Authorization': 'Bearer ' + token }
+    })
+    .then(resposta => { if (!resposta.ok) throw Error(resposta.status); return resposta; } )
+    .then(resposta => resposta.json())
+    .then(json => preencherTabela(json))
+    .catch(function(error) {
+        paragrafoMensagem.innerHTML = "Erro ao listar livros (código " + error.message + ")";
+    });
+}
+
+function preencherTabela(livros) {
+	var linhasTabela = '';
+	var n = livros.length;
+	for (var i=0; i<n; i++) {
+		var p = livros[i];
+		linhasTabela += 
+			`<tr> ` + 
+            `<td><a href="javascript:void(0)" onclick="selecionarLivro('${p.id}', '${p.titulo}', '${p.autor}', '${p.anoPublicacao}')">${p.id}</a></td>`
+             + ` <td>${p.titulo}</td> <td>${p.autor}</td> <td>${p.anoPublicacao}</td> </tr> \n`;
+	}
+	corpoTabela.innerHTML = linhasTabela;
+}
+
+function novoLivro() {
+    paragrafoMensagem.innerHTML = 'Preencha os dados do novo Livro...';
+    txtId.disabled = true;
+    txtTitulo.disabled = false;
+    txtAutor.disabled = false;
+    txtAnoPublicacao.disabled = false;
+    btnNovo.disabled = true;
+    btnSalvar.disabled = false;
+    btnApagar.disabled = true;
+    btnCancelar.disabled = false;
+    criandoNovoLivro = true;    
+}
+
+async function salvarLivro() {
+    if (criandoNovoLivro) {
+        fetch('/api/livros', {
+            method: 'POST',
+            body: JSON.stringify({
+                'titulo': txtTitulo.value,
+                'autor': txtAutor.value,
+                'anoPublicacao': txtAnoPublicacao.value
+            }),
+            headers: {
+            	'Content-type': 'application/json',
+            	'Authorization': 'Bearer ' + token
+            }
+        })
+        .then(resposta => { if (!resposta.ok) throw Error(resposta.status); return resposta; } )
+        .then(resposta => resposta.json())
+        .then(json => inicializar())
+        .catch(function(error) {
+            paragrafoMensagem.innerHTML = "Erro ao criar livro (código " + error.message + ")";
+        });  
+    }
+    else {
+        fetch('/api/livros/' + txtId.value, {
+            method: 'PUT',
+            body: JSON.stringify({
+                'id': txtId.value,
+                'titulo': txtTitulo.value,
+                'autor': txtAutor.value,
+                'anoPublicacao': txtAnoPublicacao.value
+            }),
+            headers: {
+            	'Content-type': 'application/json',
+            	'Authorization': 'Bearer ' + token
+            }
+        })
+        .then(resposta => { if (!resposta.ok) throw Error(resposta.status); return resposta; } )
+        .then(resposta => resposta.json())
+        .then(json => inicializar())
+        .catch(function(error) {
+            paragrafoMensagem.innerHTML = "Erro ao alterar livro (código " + error.message + ")";
+        });         
+    }  
+}
+
+function cancelarEdicao() {
+	inicializar();
+}
+
+function selecionarLivro(id, titulo, autor, anoPublicacao) {
+    paragrafoMensagem.innerHTML = 'Altere e salve os dados do livro, ou então apague o registro do livro.'
+    txtId.value = id;
+    txtTitulo.value = titulo;
+    txtAutor.value = autor;
+    txtAnoPublicacao.value = anoPublicacao;
+    txtId.disabled = true;
+    txtTitulo.disabled = false;
+    txtAutor.disabled = false;
+    txtAnoPublicacao.disabled = false;
+    btnNovo.disabled = true;
+    btnSalvar.disabled = false;
+    btnApagar.disabled = false;
+    btnCancelar.disabled = false; 
+}
+
+async function apagarLivro() {
+	fetch('/api/livros/' + txtId.value, {
+        method: 'DELETE',
+        headers: {'Authorization': 'Bearer ' + token }
+    })
+    .then(resposta => { if (!resposta.ok) throw Error(resposta.status); return resposta; } )
+    .then(resposta => inicializar())
+    .catch(function(error) {
+        paragrafoMensagem.innerHTML = "Erro ao apagar livro (código " + error.message + ")";
+    });
+}
+
+function logout() {
+	localStorage.removeItem('token');
+	window.location.replace("/html/login.html");
+}
+
+        </script>
+	</body>
+</html>
